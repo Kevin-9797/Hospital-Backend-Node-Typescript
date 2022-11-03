@@ -20,6 +20,7 @@ export class Server {
             apiUser:'/api/users',
             apiAuth: '/api/auth',
             apiSearch: '/api/search',
+            apiUploads: '/api/uploads',
             apiMedical: '/api/medical',
             apiHospital: '/api/hospital',
             apiToken: 'apiToken'
@@ -60,6 +61,11 @@ export class Server {
         this._app.use(
             this.apiRoutes.apiSearch,
             require('../routes/searchs.api.routes')
+        );
+
+        this._app.use(
+            this.apiRoutes.apiUploads,
+            require('../routes/uploads.api.routes')
         );
     }
     

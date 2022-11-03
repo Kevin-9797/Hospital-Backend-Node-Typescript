@@ -26,6 +26,7 @@ class Server {
             apiUser: '/api/users',
             apiAuth: '/api/auth',
             apiSearch: '/api/search',
+            apiUploads: '/api/uploads',
             apiMedical: '/api/medical',
             apiHospital: '/api/hospital',
             apiToken: 'apiToken'
@@ -40,6 +41,7 @@ class Server {
         this._app.use(this.apiRoutes.apiHospital, require('../routes/hospital.api.routes'));
         this._app.use(this.apiRoutes.apiMedical, require('../routes/medical.api.routes'));
         this._app.use(this.apiRoutes.apiSearch, require('../routes/searchs.api.routes'));
+        this._app.use(this.apiRoutes.apiUploads, require('../routes/uploads.api.routes'));
     }
     middlewares() {
         this._app.use((0, cors_1.default)(corsConfig_1.corsConfig));
