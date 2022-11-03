@@ -21,17 +21,17 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userDb = yield user_1.UserModel.findOne({ email });
         if (!userDb) {
-            res.status(500).json({
+            return res.status(500).json({
                 msg: 'Email registered in the database',
             });
         }
         const validPassword = bcryptjs_1.default.compareSync(password, userDb.password);
         if (!validPassword) {
-            res.status(500).json({
+            return res.status(500).json({
                 msg: 'Email or password are incorrect',
             });
         }
-        const token = yield (0, jwt_1.generateJWT)(userDb.uid);
+        const token = yield (0, jwt_1.generateJWT)(userDb._id);
         res.json({
             ok: true,
             token

@@ -5,13 +5,26 @@ import bcryptjs from 'bcryptjs'
 
 export const getUsers = async( req: Request ,res:Response ) => {
 
-    const users = await UserModel.find({},'name email');
+    const start = Number(req.query.start) || 0;
+    
 
+
+    const [total, users] = await Promise.all([
+        UserModel.countDocuments(),
+        UserModel.find({},'name email')
+        .skip( start )
+        .limit( 5 ),
+
+    ])
+
+
+               
 
 
     res.json( {
         ok: true,
-        users
+        users,
+        total
     } );
 
 

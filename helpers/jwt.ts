@@ -1,10 +1,11 @@
 import { rejects } from 'assert';
 import jwt from 'jsonwebtoken';
+import { ObjectId } from 'mongoose';
 import { resolve } from 'path';
 
 
 
-export const generateJWT = ( uid: string ) => {
+export const generateJWT = ( uid:any ) => {
 
     
 

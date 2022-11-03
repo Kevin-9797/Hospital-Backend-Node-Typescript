@@ -2,11 +2,20 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
 
+
+
+type MyToken = {
+    uid: string
+    iat: number
+    exp: number
+  }
+  
+
+
 export const validateJWT = ( req:Request,res:Response,next:NextFunction ) => {
 
     const token = req.header('x-token');
 
-    
 
     try {
 
@@ -18,8 +27,8 @@ export const validateJWT = ( req:Request,res:Response,next:NextFunction ) => {
         }
     
         
-        const resp = jwt.verify( token, process.env.JWT_PRIVATE_KEY );
-         
+        const resp = jwt.verify( token, process.env.JWT_PRIVATE_KEY ) as MyToken;
+        req.uid = resp.uid;
         next();
 
     } catch (error) {

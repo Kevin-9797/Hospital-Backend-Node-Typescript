@@ -27,10 +27,17 @@ exports.deleteUser = exports.updateUser = exports.createUser = exports.getUsers 
 const models_1 = require("../models");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const getUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const users = yield models_1.UserModel.find({}, 'name email');
+    const start = Number(req.query.start) || 0;
+    const [total, users] = yield Promise.all([
+        models_1.UserModel.countDocuments(),
+        models_1.UserModel.find({}, 'name email')
+            .skip(start)
+            .limit(5),
+    ]);
     res.json({
         ok: true,
-        users
+        users,
+        total
     });
 });
 exports.getUsers = getUsers;

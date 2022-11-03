@@ -16,7 +16,7 @@ export const loginUser = async( req:Request, res:Response ) => {
 
         if( !userDb ) {
 
-            res.status(500).json({
+           return res.status(500).json({
                 msg:'Email registered in the database',
                 
             })        
@@ -28,14 +28,13 @@ export const loginUser = async( req:Request, res:Response ) => {
         if( !validPassword ){
 
 
-            res.status(500).json({
+            return res.status(500).json({
                 msg:'Email or password are incorrect',
                 
             })
 
         }
-
-        const token = await generateJWT( userDb!.uid );
+        const token = await generateJWT( userDb!._id );
 
 
 
