@@ -18,20 +18,18 @@ const medical_1 = require("../models/medical");
 const cloudinary_1 = __importDefault(require("cloudinary"));
 const user_1 = require("../models/user");
 cloudinary_1.default.v2.config(process.env.CLOUDINARY_URL);
-const uploadFile = (req, res) => {
+const uploadFile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id, collection = '' } = req.params;
     if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).json({
             msg: 'No files were uploaded.'
         });
     }
-};
-exports.uploadFile = uploadFile;
-const updateImgCloudinary = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id, collection = '' } = req.params;
     let model;
     switch (collection) {
         case 'users':
-            model = yield user_1.UserModel.findById(id);
+            model = yield user_1.UserModel.findById(id.match(/^[0-9a-fA-F]{24}$/));
+            console.log(id.match(/^[0-9a-fA-F]{24}$/));
             if (!model) {
                 return res.status(400).json({
                     msg: `User id ${id} not exist`
@@ -67,13 +65,73 @@ const updateImgCloudinary = (req, res) => __awaiter(void 0, void 0, void 0, func
         console.log(`node-cafe/${collection}/${public_id}`);
         cloudinary_1.default.v2.uploader.destroy(`node-cafe/${collection}/${public_id}`, { invalidate: true, resource_type: "image" });
     }
-    const { tempFilePath } = req.files.file;
-    const { secure_url } = yield cloudinary_1.default.v2.uploader.upload(tempFilePath, { folder: `node-cafe/${collection}` });
-    model.img = secure_url;
+    const archivo = req.files.file;
+    console.log(archivo);
+});
+exports.uploadFile = uploadFile;
+const updateImgCloudinary = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id, collection = '' } = req.params;
+    if (!req.files || Object.keys(req.files).length === 0) {
+        return res.status(400).json({
+            msg: 'No files were uploaded.'
+        });
+    }
+    let model;
+    switch (collection) {
+        case 'users':
+            model = yield user_1.UserModel.findById(id.match(/^[0-9a-fA-F]{24}$/));
+            console.log(model);
+            if (!model) {
+                return res.status(400).json({
+                    msg: `User id ${id} not exist`
+                });
+            }
+            break;
+        case 'medicals':
+            model = yield medical_1.Medical.findById(id.match(/^[0-9a-fA-F]{24}$/));
+            if (!model) {
+                return res.status(400).json({
+                    msg: `Product id ${id} not exist`
+                });
+            }
+            break;
+        case 'hospitals':
+            model = yield hospital_1.Hospital.findById(id.match(/^[0-9a-fA-F]{24}$/));
+            if (!model) {
+                return res.status(400).json({
+                    msg: `Product id ${id} not exist`
+                });
+            }
+            break;
+        default:
+            return res.status(500).json({
+                msg: 'Internal server error'
+            });
+    }
+    if (model.img) {
+        const nameArr = model.img.split('/');
+        const name = nameArr[nameArr.length - 1];
+        const [public_id] = name.split('.');
+        console.log(public_id);
+        console.log(`node-cafe/${collection}/${public_id}`);
+        cloudinary_1.default.v2.uploader.destroy(`node-hospital/${collection}/${public_id}`, { invalidate: true, resource_type: "image" });
+    }
+    try {
+        const archivo = req.files.file;
+        const { secure_url } = yield cloudinary_1.default.v2.uploader.upload(archivo.tempFilePath, { folder: `node-hospital/${collection}` });
+        console.log(secure_url);
+        model.img = secure_url.toString();
+        yield model.save();
+        res.json(model);
+    }
+    catch (error) {
+        return res.status(500).json({
+            msg: 'Internal server error',
+        });
+    }
     // const name = await processFile( req.files, undefined ,colection );
     // model.img = name;
     // await model.save();
-    res.json(model);
 });
 exports.updateImgCloudinary = updateImgCloudinary;
 //# sourceMappingURL=uploads.js.map

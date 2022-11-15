@@ -3,6 +3,7 @@ import { ApiRoute } from '../interfaces/apis';
 import { databaseConnection } from '../database/config';
 import cors from 'cors'
 import { corsConfig } from '../helpers/corsConfig';
+import fileUpload from 'express-fileupload';
 
 export class Server {
 
@@ -13,7 +14,7 @@ export class Server {
     constructor() {
         this._app = express();
         this.port = ( process.env.PORT as Number ) ?? 8080;
-        
+    
         this.apiRoutes = {
             
 
@@ -26,6 +27,11 @@ export class Server {
             apiToken: 'apiToken'
             
         }
+        this._app.use(fileUpload({ 
+            useTempFiles : true,
+            tempFileDir : '/tmp/',
+            createParentPath: true,
+        }));
         this.dbConnection();
         this.middlewares();
         this.routes();

@@ -17,6 +17,7 @@ const express_1 = __importDefault(require("express"));
 const config_1 = require("../database/config");
 const cors_1 = __importDefault(require("cors"));
 const corsConfig_1 = require("../helpers/corsConfig");
+const express_fileupload_1 = __importDefault(require("express-fileupload"));
 class Server {
     constructor() {
         var _a;
@@ -31,6 +32,11 @@ class Server {
             apiHospital: '/api/hospital',
             apiToken: 'apiToken'
         };
+        this._app.use((0, express_fileupload_1.default)({
+            useTempFiles: true,
+            tempFileDir: '/tmp/',
+            createParentPath: true,
+        }));
         this.dbConnection();
         this.middlewares();
         this.routes();

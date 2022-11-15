@@ -1,3 +1,4 @@
+import { UploadedFile } from 'express-fileupload';
 import { UserData } from './interfaces';
 
 declare global {
@@ -15,7 +16,7 @@ declare global {
     interface Request {
       uid?: string;
       files?: {
-        file: any
+        file: UploadedFile
       };
 
       user?: UserData;

@@ -25,6 +25,9 @@ const UserSchema:Schema = new Schema<UserData>({
         type: Boolean,
         default: false,
     },
+    img:{
+        type: String,
+    },
     role:{
         type: String,
         enum: Role,

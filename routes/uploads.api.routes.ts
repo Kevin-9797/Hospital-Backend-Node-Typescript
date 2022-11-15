@@ -1,5 +1,4 @@
 import { Request, Response, Router } from 'express';
-import { loginUser } from '../controllers/auth';
 import { check } from 'express-validator';
 import { updateImgCloudinary, uploadFile } from '../controllers/uploads';
 import expressFileUpload from 'express-fileupload'
@@ -8,7 +7,7 @@ import { validateZones } from '../middlewares/validate-zone';
 
 const router = Router();
 
-router.use( expressFileUpload() );
+// router.use( expressFileUpload() );
 
 
 router.post('/:collection/:id',[
