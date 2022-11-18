@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
 import { check } from 'express-validator';
-import { updateImgCloudinary, uploadFile } from '../controllers/uploads';
+import { updateImgCloudinary, uploadFile, getFileCloudinary } from '../controllers/uploads';
 import expressFileUpload from 'express-fileupload'
 import { validateJWT } from '../middlewares/validate-jwt';
 import { validateZones } from '../middlewares/validate-zone';
@@ -17,6 +17,12 @@ router.post('/:collection/:id',[
     validateZones    
 ], updateImgCloudinary )
 
+router.get('/:collection/:id',[
+  validateJWT,
+  check('id','The id has to be a valid mongo id').isMongoId(),
+
+  validateZones    
+], getFileCloudinary )
 
 
 router.get('*', (req: Request, res: Response) => {

@@ -12,6 +12,11 @@ router.post('/:collection/:id', [
     (0, express_validator_1.check)('id', 'The id has to be a valid mongo id').isMongoId(),
     validate_zone_1.validateZones
 ], uploads_1.updateImgCloudinary);
+router.get('/:collection/:id', [
+    validate_jwt_1.validateJWT,
+    (0, express_validator_1.check)('id', 'The id has to be a valid mongo id').isMongoId(),
+    validate_zone_1.validateZones
+], uploads_1.getFileCloudinary);
 router.get('*', (req, res) => {
     return res.status(404).json({
         ok: false,

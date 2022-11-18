@@ -12,11 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateImgCloudinary = exports.uploadFile = void 0;
+exports.getFileCloudinary = exports.updateImgCloudinary = exports.uploadFile = void 0;
+const request_1 = __importDefault(require("request"));
 const hospital_1 = require("../models/hospital");
 const medical_1 = require("../models/medical");
 const cloudinary_1 = __importDefault(require("cloudinary"));
 const user_1 = require("../models/user");
+const path_1 = __importDefault(require("path"));
 cloudinary_1.default.v2.config(process.env.CLOUDINARY_URL);
 const uploadFile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id, collection = '' } = req.params;
@@ -134,4 +136,45 @@ const updateImgCloudinary = (req, res) => __awaiter(void 0, void 0, void 0, func
     // await model.save();
 });
 exports.updateImgCloudinary = updateImgCloudinary;
+const getFileCloudinary = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { collection, id } = req.params;
+    let model;
+    switch (collection) {
+        case 'users':
+            model = yield user_1.UserModel.findById(id.match(/^[0-9a-fA-F]{24}$/));
+            break;
+        case 'medicals':
+            model = yield medical_1.Medical.findById(id.match(/^[0-9a-fA-F]{24}$/));
+            break;
+        case 'hospitals':
+            model = yield hospital_1.Hospital.findById(id.match(/^[0-9a-fA-F]{24}$/));
+            break;
+        default:
+            return res.status(400).json({
+                msg: 'Prrogrammer error',
+            });
+    }
+    if (!model) {
+        return res.status(401).json({
+            msg: 'The submitted model id does not exist in the database'
+        });
+    }
+    if (model.img) {
+        (0, request_1.default)({
+            url: model.img,
+            encoding: null
+        }, (err, resp, buffer) => {
+            if (!err && resp.statusCode === 200) {
+                res.set('Content-Type', 'image/jpeg');
+                res.send(resp.body);
+            }
+        });
+        // res.sendFile( model.img );
+    }
+    else {
+        const notFoundImage = path_1.default.join(__dirname, '../assets/images/not_found.jpg');
+        res.sendFile(notFoundImage);
+    }
+});
+exports.getFileCloudinary = getFileCloudinary;
 //# sourceMappingURL=uploads.js.map

@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import request from 'request'
 
 import fs from 'fs'
 import { Hospital } from '../models/hospital';
@@ -10,6 +11,7 @@ import { UploadedFile } from 'express-fileupload';
 import { UserData } from '../interfaces/user';
 import { HospitalData } from '../interfaces/hospital';
 import { MedicalData } from "../interfaces";
+import path from "path";
 cloudinary.v2.config( process.env.CLOUDINARY_URL );
 
 export const uploadFile = async( req:Request, res:Response ) => {
@@ -182,12 +184,78 @@ export const updateImgCloudinary = async( req:Request, res:Response ) => {
     }
 
 
-    
 
+    
     // const name = await processFile( req.files, undefined ,colection );
     // model.img = name;
     // await model.save();
 
+}
 
+
+export const getFileCloudinary = async( req: Request,res: Response ) => {
+    const {collection,id } = req.params;
+    
+
+    let model;
+
+
+
+
+    switch ( collection ) {
+        case 'users':
+            model = await UserModel.findById( id.match(/^[0-9a-fA-F]{24}$/) );            
+
+
+            break;
+        case 'medicals':
+            model = await Medical.findById( id.match(/^[0-9a-fA-F]{24}$/) );            
+            
+            break;
+        case 'hospitals':
+            model = await Hospital.findById( id.match(/^[0-9a-fA-F]{24}$/) );            
+        
+            break;
+        default:
+            return res.status(400).json({
+                msg: 'Prrogrammer error',    
+
+            })
+    }
+
+
+
+    if( !model ) {
+        return res.status(401).json({
+            msg: 'The submitted model id does not exist in the database'
+        })
+    }
+
+
+
+    if( model.img ) {
+
+
+        request({
+            url: model.img,
+            encoding: null
+        },
+        (err,resp,buffer) => {
+            if(!err && resp.statusCode === 200){
+                res.set('Content-Type','image/jpeg');
+                res.send( resp.body );
+            }
+            
+        })
+        // res.sendFile( model.img );
+
+    }else{
+        const notFoundImage = path.join(__dirname,'../assets/images/not_found.jpg')
+        
+        res.sendFile(notFoundImage)
+
+    }
+
+    
 
 }
