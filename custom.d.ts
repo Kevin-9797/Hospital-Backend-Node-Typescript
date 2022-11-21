@@ -9,6 +9,8 @@ declare global {
       DOMAIN: string;
       MONGO_CONNECTION: string;
       CLOUDINARY_URL: string;
+      GOOGLE_ID: string;
+      GOOGLE_SECRET: string;
       JWT_PRIVATE_KEY: Secret;
     }
   }

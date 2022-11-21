@@ -4,9 +4,44 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Google Sign In</title>
 </head>
 <body>
+    <h1>Google Sign In</h1>
+    <div id="buttonDiv"></div> 
     
+
+
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+        var url = 'http://localhost:8080/api/auth/google'
+
+        function handleCredentialResponse(response) {
+
+            fetch( url , {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    token: response.credential
+                })
+            }).then( resp => resp.json() )
+            .then(data => console.log( 'Nuestro server', data ))
+            .catch( console.log )
+
+        }
+        window.onload = function () {
+          google.accounts.id.initialize({
+            client_id: "119448347446-pu5svvp9q1e0c66d6adi00ts7jrugu6f.apps.googleusercontent.com",
+            callback: handleCredentialResponse
+          });
+          google.accounts.id.renderButton(
+            document.getElementById("buttonDiv"),
+            { theme: "outline", size: "large" }  // customization attributes
+          );
+          google.accounts.id.prompt(); // also display the One Tap dialog
+        }
+    </script>
+
 </body>
 </html>

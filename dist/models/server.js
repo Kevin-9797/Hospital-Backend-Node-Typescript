@@ -51,6 +51,7 @@ class Server {
     }
     middlewares() {
         this._app.use((0, cors_1.default)(corsConfig_1.corsConfig));
+        this._app.use(express_1.default.static('public'));
         this._app.use(express_1.default.json());
     }
     dbConnection() {

@@ -12,10 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginUser = void 0;
+exports.googleSignIn = exports.loginUser = void 0;
 const user_1 = require("../models/user");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jwt_1 = require("../helpers/jwt");
+const google_verify_1 = require("../helpers/google-verify");
 const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     try {
@@ -45,4 +46,37 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.loginUser = loginUser;
+const googleSignIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { token } = req.body;
+    const { name, email, img } = yield (0, google_verify_1.googleVerify)(token);
+    let userDb = yield user_1.UserModel.findOne({ email });
+    let user;
+    if (userDb === null) {
+        const data = {
+            name,
+            email,
+            password: '@@@',
+            img,
+            isGoogle: true
+        };
+        user = new user_1.UserModel(data);
+        console.log(user);
+    }
+    else {
+        user = userDb;
+        user.isGoogle = true;
+    }
+    yield user.save();
+    if (user.isDeleted) {
+        return res.status(401).json({
+            msg: 'User not found '
+        });
+    }
+    const tokenNew = yield (0, jwt_1.generateJWT)(user._id);
+    res.json({
+        user,
+        tokenNew
+    });
+});
+exports.googleSignIn = googleSignIn;
 //# sourceMappingURL=auth.js.map

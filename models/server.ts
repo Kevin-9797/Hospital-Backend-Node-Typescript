@@ -81,6 +81,8 @@ export class Server {
         
         this._app.use( cors( corsConfig ) );
 
+        this._app.use( express.static('public') );
+
 
         this._app.use( express.json() );
 
