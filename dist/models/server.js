@@ -30,7 +30,7 @@ class Server {
             apiUploads: '/api/uploads',
             apiMedical: '/api/medical',
             apiHospital: '/api/hospital',
-            apiToken: 'apiToken'
+            apiToken: '/api/apiToken'
         };
         this._app.use((0, express_fileupload_1.default)({
             useTempFiles: true,

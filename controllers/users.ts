@@ -37,7 +37,7 @@ export const createUser = async( req: Request ,res:Response ) => {
     try {
         
             const existEmail = await UserModel.findOne({ email });
-            console.log()
+            console.log( req.body )
             if( existEmail ){
                 return res.status(400).json({
                     ok: false,

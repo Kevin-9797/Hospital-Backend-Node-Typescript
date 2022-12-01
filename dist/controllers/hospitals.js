@@ -34,18 +34,54 @@ const createHospital = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.createHospital = createHospital;
-const updateHospital = (req, res) => {
-    res.json({
-        ok: true,
-        msg: 'updateHospital'
-    });
-};
+const updateHospital = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { uid } = req.params;
+    const changesHospital = Object.assign({}, req.body);
+    try {
+        const hospital = yield hospital_1.Hospital.findById(uid);
+        if (!hospital) {
+            return res.status(401).json({
+                ok: false,
+                msg: ''
+            });
+        }
+        const newHospital = yield hospital_1.Hospital.findByIdAndUpdate(uid, changesHospital, { new: true });
+        res.json({
+            ok: true,
+            newHospital
+        });
+    }
+    catch (error) {
+        res.status(401).json({
+            ok: false,
+            msg: 'Error updating hospital '
+        });
+    }
+});
 exports.updateHospital = updateHospital;
-const deleteHospital = (req, res) => {
-    res.json({
-        ok: true,
-        msg: 'deleteHospital'
-    });
-};
+const deleteHospital = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { uid } = req.params;
+    const changesHospital = Object.assign({}, req.body);
+    try {
+        const hospital = yield hospital_1.Hospital.findById(uid);
+        if (!hospital) {
+            return res.status(401).json({
+                ok: false,
+                msg: ''
+            });
+        }
+        const newHospital = yield hospital_1.Hospital.findByIdAndUpdate(uid, { isDeleted: true }, { new: true });
+        res.json({
+            ok: true,
+            newHospital
+        });
+    }
+    catch (error) {
+        res.status(401).json({
+            ok: false,
+            msg: 'Error updating hospital '
+        });
+    }
+});
 exports.deleteHospital = deleteHospital;
 //# sourceMappingURL=hospitals.js.map

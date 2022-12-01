@@ -13,6 +13,13 @@ router.post('/', [
     (0, express_validator_1.check)('hospitalId', 'The hospitalId has to be a valid mongo id').isMongoId(),
     validate_zone_1.validateZones
 ], hospitals_1.createHospital);
-router.put('/:uid', [], hospitals_1.updateHospital);
+router.put('/:uid', [
+    validate_jwt_1.validateJWT,
+    (0, express_validator_1.check)('name', 'Name is required').not().isEmpty(),
+    validate_zone_1.validateZones
+], hospitals_1.updateHospital);
+router.delete('/:uid', [
+    validate_jwt_1.validateJWT,
+], hospitals_1.deleteHospital);
 module.exports = router;
 //# sourceMappingURL=hospital.api.routes.js.map

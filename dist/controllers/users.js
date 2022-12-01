@@ -45,7 +45,7 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     const { name, email, password } = req.body;
     try {
         const existEmail = yield models_1.UserModel.findOne({ email });
-        console.log();
+        console.log(req.body);
         if (existEmail) {
             return res.status(400).json({
                 ok: false,

@@ -1,6 +1,6 @@
 import { Router, request,response } from 'express';
 import { validateJWT } from '../middlewares/validate-jwt';
-import { createHospital, updateHospital, getHospitals } from '../controllers/hospitals';
+import { createHospital, updateHospital, getHospitals, deleteHospital } from '../controllers/hospitals';
 import { validateZones } from '../middlewares/validate-zone';
 import { check } from 'express-validator';
 
@@ -23,7 +23,15 @@ router.post('/',[
 
 
 router.put('/:uid',[
-
+    validateJWT,
+    check('name','Name is required').not().isEmpty(),
+    validateZones
 ],updateHospital );
+
+
+
+router.delete('/:uid',[
+    validateJWT,
+],deleteHospital );
 
 module.exports = router;

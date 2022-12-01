@@ -48,23 +48,77 @@ export const createHospital = async( req: Request, res:Response ) => {
 }
 
 
-export const updateHospital = ( req: Request, res:Response ) => {
+export const updateHospital = async( req: Request, res:Response ) => {
 
-    res.json({
-        ok:true,
-        msg:'updateHospital'
-    })
+    const { uid } = req.params;
+
+    const changesHospital = {
+        ...req.body
+    }
+
+    try {
+        const hospital = await Hospital.findById( uid )
+        
+        if(!hospital){
+            return res.status(401).json({
+                ok: false,
+                msg: ''
+            })
+        }
+
+
+        const newHospital = await Hospital.findByIdAndUpdate( uid,changesHospital,{ new: true});
+
+        res.json({
+            ok: true,
+            newHospital
+        })
+    } catch (error) {
+        res.status(401).json({
+            ok: false,
+            msg: 'Error updating hospital '
+        })
+    }
+
+
 
 
 }
 
 
-export const deleteHospital = ( req: Request, res:Response ) => {
+export const deleteHospital = async( req: Request, res:Response ) => {
 
-    res.json({
-        ok:true,
-        msg:'deleteHospital'
-    })
+    const { uid } = req.params;
+
+    const changesHospital = {
+        ...req.body
+    }
+
+    try {
+        const hospital = await Hospital.findById( uid )
+        
+        if(!hospital){
+            return res.status(401).json({
+                ok: false,
+                msg: ''
+            })
+        }
+
+
+        const newHospital = await Hospital.findByIdAndUpdate( uid, { isDeleted: true },{ new: true } );
+
+        res.json({
+            ok: true,
+            newHospital
+        })
+    } catch (error) {
+        res.status(401).json({
+            ok: false,
+            msg: 'Error updating hospital '
+        })
+    }
+
+
 
 
 }
