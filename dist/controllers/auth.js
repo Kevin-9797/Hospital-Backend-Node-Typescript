@@ -19,11 +19,12 @@ const jwt_1 = require("../helpers/jwt");
 const google_verify_1 = require("../helpers/google-verify");
 const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
+    console.log(email + 'aca esta el email');
     try {
         const userDb = yield user_1.UserModel.findOne({ email });
         if (!userDb) {
             return res.status(500).json({
-                msg: 'Email registered in the database',
+                msg: 'Email not exist',
             });
         }
         const validPassword = bcryptjs_1.default.compareSync(password, userDb.password);
@@ -47,8 +48,9 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.loginUser = loginUser;
 const googleSignIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { token } = req.body;
-    const { name, email, img } = yield (0, google_verify_1.googleVerify)(token);
+    const { token: oldToken } = req.body;
+    console.log(req.body, 'este es el body');
+    const { name, email, img } = yield (0, google_verify_1.googleVerify)(oldToken);
     let userDb = yield user_1.UserModel.findOne({ email });
     let user;
     if (userDb === null) {
@@ -72,10 +74,10 @@ const googleSignIn = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             msg: 'User not found '
         });
     }
-    const tokenNew = yield (0, jwt_1.generateJWT)(user._id);
+    const token = yield (0, jwt_1.generateJWT)(user._id);
     res.json({
         user,
-        tokenNew
+        token
     });
 });
 exports.googleSignIn = googleSignIn;

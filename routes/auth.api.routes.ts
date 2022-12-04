@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { googleSignIn, loginUser } from '../controllers/auth';
+import { googleSignIn, loginUser, renewToken } from '../controllers/auth';
 import { check } from 'express-validator';
 import { validateZones } from '../middlewares/validate-zone';
 import { validateJWT } from '../middlewares/validate-jwt';
@@ -17,14 +17,14 @@ router.post('/login',[
 ], loginUser )
 
 router.post('/google',[
-    check('token','The token google is required ').notEmpty(),
+    check('token','The token google is required ').not().isEmpty(),
     validateZones
 ], googleSignIn )
 
-router.post('/renew',[
+router.get('/renew',[
   validateJWT,
   validateZones
-], googleSignIn );
+],  renewToken );
 
 router.get('*', (req: Request, res: Response) => {
     return res.status(404).json({

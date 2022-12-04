@@ -13,13 +13,13 @@ router.post('/login', [
     validate_zone_1.validateZones
 ], auth_1.loginUser);
 router.post('/google', [
-    (0, express_validator_1.check)('token', 'The token google is required ').notEmpty(),
+    (0, express_validator_1.check)('token', 'The token google is required ').not().isEmpty(),
     validate_zone_1.validateZones
 ], auth_1.googleSignIn);
-router.post('/renew', [
+router.get('/renew', [
     validate_jwt_1.validateJWT,
     validate_zone_1.validateZones
-], auth_1.googleSignIn);
+], auth_1.renewToken);
 router.get('*', (req, res) => {
     return res.status(404).json({
         ok: false,

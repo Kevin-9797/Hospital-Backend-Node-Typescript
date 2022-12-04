@@ -12,7 +12,7 @@ import { UserData } from '../interfaces/user';
 export const loginUser = async( req:Request, res:Response ) => {
 
     const { email,password } = req.body;
-
+    console.log(email + 'aca esta el email')
     try {
 
         const userDb = await  UserModel.findOne({ email });
@@ -20,7 +20,7 @@ export const loginUser = async( req:Request, res:Response ) => {
         if( !userDb ) {
 
            return res.status(500).json({
-                msg:'Email registered in the database',
+                msg:'Email not exist',
                 
             })        
 
@@ -64,10 +64,10 @@ export const loginUser = async( req:Request, res:Response ) => {
 
 export const googleSignIn = async( req:Request, res:Response ) => {
 
-    const { token } = req.body;
+    const { token:oldToken } = req.body;
 
-        const { name,email,img } =  await googleVerify( token );
-
+    console.log(req.body ,'este es el body')            
+        const { name,email,img } =  await googleVerify( oldToken );
 
       
         let userDb = await UserModel.findOne({ email });
@@ -102,11 +102,11 @@ export const googleSignIn = async( req:Request, res:Response ) => {
             })
         }
 
-        const tokenNew = await generateJWT( user!._id );
+        const token = await generateJWT( user!._id );
         
          res.json({
                 user,
-                tokenNew
+                token
             })
 
    
