@@ -120,13 +120,20 @@ export const renewToken = async( req: Request,res: Response ) => {
 
 
     const uid = req.uid;
-
-
+    console.log(uid)
+    const user = await UserModel.findById(uid);
+    const resp = {
+        uid,
+        
+    }
     const token = await generateJWT(uid);
-
+    
+    console.log(user)
     res.json({
         ok: true,
-        token 
+        token,
+        user,
+        uid
     })
 
 

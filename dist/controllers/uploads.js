@@ -120,6 +120,7 @@ const updateImgCloudinary = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
     try {
         const archivo = req.files.file;
+        console.log(archivo);
         const { secure_url } = yield cloudinary_1.default.v2.uploader.upload(archivo.tempFilePath, { folder: `node-hospital/${collection}` });
         console.log(secure_url);
         model.img = secure_url.toString();

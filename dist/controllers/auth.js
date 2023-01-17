@@ -83,10 +83,18 @@ const googleSignIn = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 exports.googleSignIn = googleSignIn;
 const renewToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const uid = req.uid;
+    console.log(uid);
+    const user = yield user_1.UserModel.findById(uid);
+    const resp = {
+        uid,
+    };
     const token = yield (0, jwt_1.generateJWT)(uid);
+    console.log(user);
     res.json({
         ok: true,
-        token
+        token,
+        user,
+        uid
     });
 });
 exports.renewToken = renewToken;

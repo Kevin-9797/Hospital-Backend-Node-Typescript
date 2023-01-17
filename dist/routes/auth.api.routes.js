@@ -5,10 +5,12 @@ const auth_1 = require("../controllers/auth");
 const express_validator_1 = require("express-validator");
 const validate_zone_1 = require("../middlewares/validate-zone");
 const validate_jwt_1 = require("../middlewares/validate-jwt");
+const db_validators_1 = require("../helpers/db-validators");
 const router = (0, express_1.Router)();
 router.post('/login', [
     (0, express_validator_1.check)('email', 'Email is required').not().isEmpty(),
     (0, express_validator_1.check)('email', 'Email not valid').isEmail(),
+    (0, express_validator_1.check)('email').custom(db_validators_1.emailExist),
     (0, express_validator_1.check)('password', 'Password is required').not().isEmpty(),
     validate_zone_1.validateZones
 ], auth_1.loginUser);

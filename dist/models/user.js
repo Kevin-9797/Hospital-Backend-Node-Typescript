@@ -43,6 +43,9 @@ const UserSchema = new mongoose_1.Schema({
         enum: user_1.Role,
         default: user_1.Role.NORMAL_USER_ROLE,
     },
+    uid: {
+        type: String,
+    }
 });
 UserSchema.method('toJSON', function () {
     const _a = this.toObject(), { __v, _id } = _a, object = __rest(_a, ["__v", "_id"]);

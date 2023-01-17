@@ -33,6 +33,9 @@ const UserSchema:Schema = new Schema<UserData>({
         enum: Role,
         default: Role.NORMAL_USER_ROLE,  
     },
+    uid:{
+        type: String,
+    }
 
     
 

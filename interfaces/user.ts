@@ -8,6 +8,8 @@ export interface UserData {
    isGoogle: Boolean;
    role: Role;
    img: string;
+   uid?: string;
+
 }
 
 

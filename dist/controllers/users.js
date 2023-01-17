@@ -27,13 +27,17 @@ exports.deleteUser = exports.updateUser = exports.createUser = exports.getUsers 
 const models_1 = require("../models");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const getUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const start = Number(req.query.start) || 0;
+    const { start } = req.query;
     const [total, users] = yield Promise.all([
         models_1.UserModel.countDocuments(),
-        models_1.UserModel.find({}, 'name email')
-            .skip(start)
-            .limit(5),
+        models_1.UserModel
+            .find()
+            .skip(Number(start))
     ]);
+    users.forEach(function (user) {
+        user['uid'] = user['_id'].toString();
+        delete user['_id'];
+    });
     res.json({
         ok: true,
         users,
@@ -88,12 +92,20 @@ const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 });
             }
         }
-        data.email = email;
+        if (!userDb.isGoogle) {
+            data.email = email;
+        }
+        else if (userDb.email !== email || userDb.password !== password) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Google user cant change password or email'
+            });
+        }
         const userUpdated = yield models_1.UserModel.findByIdAndUpdate(uid, data, { new: true });
         res.json(userUpdated);
     }
     catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             msg: 'Please contact with admin',
         });
     }
@@ -109,7 +121,12 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 msg: 'User not exist'
             });
         }
-        yield models_1.UserModel.findByIdAndUpdate(uid, { estado: false });
+        const resp = yield models_1.UserModel.findByIdAndUpdate(uid, { estado: false }, { new: true });
+        console.log(resp);
+        return res.json({
+            ok: true,
+            msg: 'User deleted successfully'
+        });
     }
     catch (error) {
         res.status(500).json({

@@ -7,4 +7,4 @@ import { UserData } from "./user";
     user: UserData;
     hospital: HospitalData  ;
  }
- 
+  

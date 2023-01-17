@@ -1,30 +1,35 @@
 import { Request, Response } from "express";
 import  { UserModel }  from '../models'
 import bcryptjs from 'bcryptjs'
+import { X509Certificate } from "crypto";
+import { ObjectId } from 'mongoose';
 
 
 export const getUsers = async( req: Request ,res:Response ) => {
 
-    const start = Number(req.query.start) || 0;
+  
+    const { start  } = req.query;
     
 
 
     const [total, users] = await Promise.all([
         UserModel.countDocuments(),
-        UserModel.find({},'name email')
-        .skip( start )
-        .limit( 5 ),
+        UserModel
+        .find()
+        .skip( Number(start) )
 
     ])
-
-
-               
-
-
+    
+    users.forEach( function( user ) {
+        user['uid'] = user['_id']!.toString();
+        delete user['_id'];
+        
+    })
+    
     res.json( {
         ok: true,
         users,
-        total
+        total   
     } );
 
 
@@ -96,8 +101,16 @@ export const updateUser = async( req: Request ,res:Response ) => {
                 });
             }
         }
+        if(!userDb.isGoogle){
 
-        data.email = email;
+            data.email = email;
+
+        }else if( userDb.email !== email || userDb.password !== password ){
+            return res.status(400).json({
+                ok: false,
+                msg: 'Google user cant change password or email'
+            });
+        }
 
         const userUpdated = await UserModel.findByIdAndUpdate(uid,data,{ new: true });
          
@@ -105,8 +118,8 @@ export const updateUser = async( req: Request ,res:Response ) => {
 
         res.json( userUpdated );
 
-    } catch (error) {
-        res.status(500).json({
+    } catch (error) {   
+       return res.status(500).json({
             msg:'Please contact with admin',
         }) 
     }
@@ -131,8 +144,13 @@ export const deleteUser = async( req: Request ,res:Response ) => {
             })
 
         }
-        
-        await UserModel.findByIdAndUpdate( uid,{ estado: false });   
+      const resp = await UserModel.findByIdAndUpdate( uid,{ estado: false },{ new: true });   
+        console.log(resp)
+      return res.json({
+            ok: true,
+            msg: 'User deleted successfully'
+        })
+
 
     } catch (error) {
         

@@ -3,6 +3,7 @@ import { googleSignIn, loginUser, renewToken } from '../controllers/auth';
 import { check } from 'express-validator';
 import { validateZones } from '../middlewares/validate-zone';
 import { validateJWT } from '../middlewares/validate-jwt';
+import { emailExist } from '../helpers/db-validators';
 
 
 const router = Router();
@@ -12,6 +13,7 @@ router.post('/login',[
     
     check('email','Email is required').not().isEmpty(),
     check('email','Email not valid').isEmail(),
+    check('email').custom( emailExist ),
     check('password','Password is required').not().isEmpty(),
     validateZones
 ], loginUser )

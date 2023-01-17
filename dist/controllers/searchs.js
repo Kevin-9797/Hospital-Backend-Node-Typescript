@@ -37,18 +37,30 @@ const searchCollection = (req, res) => __awaiter(void 0, void 0, void 0, functio
     let data = [];
     switch (collection) {
         case 'users':
-            data = yield user_1.UserModel.find({ name: regex }).populate('user', 'name img')
-                .populate('hospital', 'name img');
+            const info = {
+                path: 'user',
+                options: { sort: { position: -1 } },
+                strictPopulate: false,
+                populate: {
+                    path: 'email',
+                    select: 'name',
+                    populate: {
+                        path: 'permissions'
+                    }
+                }
+            };
+            data = yield user_1.UserModel.find({ name: regex }).populate(info);
             return res.json({
                 ok: true,
                 results: data
             });
             break;
         case 'medicals':
-            data = yield medical_1.Medical.find({ name: regex }).populate('user', 'name img');
+            data = yield medical_1.Medical.find({ name: regex }).populate('medicals', 'name img');
             break;
         case 'hospitals':
-            data = yield hospital_1.Hospital.find({ name: regex });
+            data = yield hospital_1.Hospital.find({ name: regex })
+                .populate('hospitals', 'name img');
             break;
         default:
             return res.status(400).json({

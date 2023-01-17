@@ -5,7 +5,6 @@ import { Medical } from '../models/medical';
 
 
 
-
 export const getSearch = async( req: Request,res:Response) => {
     const search = req.params.search;
 
@@ -44,19 +43,31 @@ export const searchCollection = async( req:Request,res:Response ) => {
     let data = []; 
     switch (collection) {
         case 'users':
-            data = await UserModel.find({ name: regex }).populate('user','name img')
-                                                        .populate('hospital','name img')
+            const info = {
+                path: 'user',
+                options: { sort: { position: -1 } },
+                strictPopulate: false,
+                populate: {
+                  path: 'email',
+                  select: 'name',
+                  populate: {
+                    path: 'permissions'
+                  }
+                }
+        };
+            data = await UserModel.find({ name: regex }).populate(info)
             return res.json({
                 ok: true,
                 results: data 
             });
         break;
         case 'medicals':
-            data = await Medical.find({ name: regex }).populate('user','name img')
+            data = await Medical.find({ name: regex }).populate('medicals','name img')
             
         break;
         case 'hospitals':
             data = await Hospital.find({ name: regex })
+                                .populate('hospitals','name img')
             
         break;
                 

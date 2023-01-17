@@ -168,7 +168,7 @@ export const updateImgCloudinary = async( req:Request, res:Response ) => {
     try {
         
         const archivo:any  = req.files!.file;
-        
+        console.log(archivo)
         const { secure_url } = await cloudinary.v2.uploader.upload( archivo.tempFilePath,{ folder:`node-hospital/${ collection }`}  );
         console.log (secure_url)
         model.img = secure_url.toString();
